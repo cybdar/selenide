@@ -1,7 +1,6 @@
 package ru.netology.selenide;
 
 import com.codeborne.selenide.Condition;
-import com.codeborne.selenide.SelenideElement;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.Keys;
@@ -41,12 +40,26 @@ public class CardDeliveryTest {
         $("[data-test-id='agreement']").click();
         $$("button").find(Condition.exactText("Забронировать")).click();
 
-        SelenideElement notification = $("[data-test-id='notification']");
-        notification.shouldBe(Condition.visible, Duration.ofSeconds(15));
+        $("[data-test-id='notification'] .notification__content")
+                .shouldBe(Condition.visible, Duration.ofSeconds(15))
+                .shouldHave(Condition.text("Встреча успешно забронирована на " + deliveryDate));
+    }
 
-        notification.shouldHave(Condition.text("Успешно"));
+    @Test
+    void shouldSubmitFormWithDifferentCity() {
+        String deliveryDate = generateDate(5);
 
-        notification.shouldHave(Condition.text(deliveryDate.substring(0, 5)));
+        $("[data-test-id='city'] input").setValue("Санкт-Петербург");
+        clearDateField();
+        $("[data-test-id='date'] input").setValue(deliveryDate);
+        $("[data-test-id='name'] input").setValue("Петров Петр");
+        $("[data-test-id='phone'] input").setValue("+79234567890");
+        $("[data-test-id='agreement']").click();
+        $$("button").find(Condition.exactText("Забронировать")).click();
+
+        $("[data-test-id='notification'] .notification__content")
+                .shouldBe(Condition.visible, Duration.ofSeconds(15))
+                .shouldHave(Condition.text("Встреча успешно забронирована на " + deliveryDate));
     }
 
     @Test
@@ -109,7 +122,7 @@ public class CardDeliveryTest {
         $("[data-test-id='date'] input").setValue(deliveryDate);
         $("[data-test-id='name'] input").setValue("Иванов Иван");
         $("[data-test-id='phone'] input").setValue("+79123456789");
-
+        // Чекбокс не отмечаем
         $$("button").find(Condition.exactText("Забронировать")).click();
 
         $("[data-test-id='agreement'].input_invalid")

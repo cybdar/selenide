@@ -1,13 +1,9 @@
-name: Java Tests with Gradle
+name: Java CI
 
-on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+on: [push, pull_request]
 
 jobs:
-  test:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -19,11 +15,8 @@ jobs:
           java-version: '11'
           distribution: 'temurin'
 
-      - name: Start application
+      - name: Run SUT
         run: java -jar ./artifacts/app-card-delivery.jar &
-
-      - name: Wait for application to start
-        run: sleep 10
 
       - name: Run tests
         run: ./gradlew test --info -Dselenide.headless=true
