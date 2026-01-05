@@ -1,6 +1,7 @@
 package ru.netology.selenide;
 
 import com.codeborne.selenide.Condition;
+import com.codeborne.selenide.SelenideElement;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.Keys;
@@ -40,9 +41,12 @@ public class CardDeliveryTest {
         $("[data-test-id='agreement']").click();
         $$("button").find(Condition.exactText("Забронировать")).click();
 
-        $("[data-test-id='notification'] .notification__content")
-                .shouldBe(Condition.visible, Duration.ofSeconds(20))
-                .shouldHave(Condition.text("Успешно"));
+        SelenideElement notification = $("[data-test-id='notification']");
+        notification.shouldBe(Condition.visible, Duration.ofSeconds(15));
+
+        notification.shouldHave(Condition.text("Успешно"));
+
+        notification.shouldHave(Condition.text(deliveryDate.substring(0, 5)));
     }
 
     @Test
@@ -105,7 +109,6 @@ public class CardDeliveryTest {
         $("[data-test-id='date'] input").setValue(deliveryDate);
         $("[data-test-id='name'] input").setValue("Иванов Иван");
         $("[data-test-id='phone'] input").setValue("+79123456789");
-        // Чекбокс не ставим
 
         $$("button").find(Condition.exactText("Забронировать")).click();
 
